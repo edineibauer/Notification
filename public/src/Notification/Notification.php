@@ -1,13 +1,13 @@
 <?php
 
-namespace Dashboard;
+namespace Notification;
 
 use Conn\SqlCommand;
 
 class Notification
 {
     /**
-     * @param $usuarios (ownerpub de 1 usuário (int), ou vários usuários (array)
+     * @param int|array $usuarios (ownerpub de 1 usuário (int), ou vários usuários (array)
      * @param string $titulo
      * @param string $descricao
      * @param string|null $imagem
@@ -32,7 +32,7 @@ class Notification
     }
 
     /**
-     * @param $target
+     * @param string|array $target
      * @param string $title
      * @param string $body
      * @param string|null $image
