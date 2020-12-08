@@ -1,0 +1,10 @@
+{
+  "nome": "Firebase / Cordova Push Notification",
+  "link": "https://console.firebase.google.com/u/0/project/",
+  "constantes": {
+    "FB_SERVER_KEY": {
+      "input": "text",
+      "column": "FB_SERVER_KEY"
+    }
+  }
+}

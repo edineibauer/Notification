@@ -1,0 +1,22 @@
+{
+  "name": "ueb/notification",
+  "description": "Controle de notificações",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Edinei J. Bauer",
+      "email": "edineibauer@gmail.com"
+    }
+  ],
+  "require": {
+    "php": "^7.4",
+    "ueb/dashboard": "*",
+    "ext-json": "*"
+  },
+  "autoload": {
+    "psr-0": {
+      "Notification": "public/src/"
+    }
+  }
+}
