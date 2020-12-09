@@ -2,10 +2,29 @@
 
 namespace Notification;
 
+use Conn\Create;
 use Conn\SqlCommand;
 
 class Notification
 {
+
+    /**
+     * @param string $titulo
+     * @param string $descricao
+     * @param int|array $usuarios (ownerpub de 1 usuário (int), ou vários usuários (array)
+     * @param string|null $dateTimeToShow
+     */
+    public static function popup(string $titulo, string $descricao, $usuarios = null, string $dateTimeToShow = null)
+    {
+        $create = new Create();
+        if(!empty($usuarios) && is_array($usuarios)) {
+            foreach ($usuarios as $usuario)
+                $create->exeCreate("popup", ["titulo" => $titulo, "descricao" => $descricao, "data_de_exibicao" => $dateTimeToShow ?? date("Y-m-d H:i:s"), "ownerpub" => $usuario]);
+        } else {
+            $create->exeCreate("popup", ["titulo" => $titulo, "descricao" => $descricao, "data_de_exibicao" => $dateTimeToShow ?? date("Y-m-d H:i:s"), "ownerpub" => !empty($usuario) && is_numeric($usuario) ? ((int)$usuario) : null]);
+        }
+    }
+
     /**
      * @param int|array $usuarios (ownerpub de 1 usuário (int), ou vários usuários (array)
      * @param string $titulo
