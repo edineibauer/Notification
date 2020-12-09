@@ -11,7 +11,40 @@
         </div>
         <div class="row">
             <div class="col-12">
-                <div id="notificacoes" data-template="note" data-realtime-db="noteFuncao" data-db="notifications_report" data-template-loop="1"></div>
+                <div id="notificacoes" data-realtime-db="noteFuncao" data-db="notifications_report" data-template-loop="1">
+                    <div data-realtime-html>
+                        {{#.}}
+                            <div class="notification-item" rel="{{id}}">
+                                <div class="notification-card no-select">
+                                    <div class="notification-content-left">
+                                        <img src="{{#relationData.notificacao.imagem}}{{urls.medium}}{{/relationData.notificacao.imagem}}{{^relationData.notificacao.imagem}}{{home}}assetsPublic/img/favicon.png{{/relationData.notificacao.imagem}}" width="50" height="50" class="imagem-notificacao"/>
+                                        <div class="note-time font-weight-bold">{{data_de_envio}}</div>
+                                    </div>
+                                    <div class="notification-content-right">
+                                        <div data-id="{{id}}" class="notification-content notification-title font-weight-bold h6 mb-2">
+                                            {{{relationData.notificacao.titulo}}}
+                                        </div>
+                                        <div class="notification-content notification-desc">
+                                            {{{relationData.notificacao.descricao}}}
+                                        </div>
+                                    </div>
+                                </div>
+                                {{#id}}
+                                    <i class="material-icons" onclick="closeNote({{id}}, {{relationData.notificacao.id}})">delete</i>
+                                {{/id}}
+                                {{^id}}
+                                    <i class="material-icons" style="color: green">mood</i>
+                                {{/id}}
+                            </div>
+                        {{/.}}
+                        {{^.}}
+                            {{> empty}}
+                        {{/.}}
+                        <script>
+                            new TouchLeft($(".notification-card"), -70, 50, 0);
+                        </script>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

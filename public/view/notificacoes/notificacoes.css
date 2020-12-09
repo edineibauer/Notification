@@ -10,18 +10,16 @@
 .voltaRelativo > i {
     font-size: 35px;
     padding: 23px 15px;
-    color: #2a2a2a;
-    text-shadow: 1px 1px #fafafa;
+    color: var(--colorText);
 }
 
 .titulo {
-    font-size: 24px !important;
-    font-weight: bold !important;
-    margin-top: 25px !important;
-    margin-bottom: 30px !important;
-    float: left !important;
-    color: #2a2a2a;
-    width: auto!important;
+    font-size: 20px!important;
+    font-weight: bold!important;
+    margin-top: 28px!important;
+    margin-bottom: 30px!important;
+    float: left!important;
+    color: var(--colorText);
 }
 
 .btn-notify {
@@ -64,4 +62,101 @@
 
 h6 {
     font-weight: 600;
+}
+.notification-item {
+    position: relative;
+    padding-bottom: 10px;
+    float: left;
+    width: 100%;
+}
+
+.notification-item > i.material-icons {
+    font-size: 24px;
+    padding: 10px;
+    cursor: pointer;
+    position: absolute;
+    top: calc(50% - 25px);
+    right: 10px;
+    color: #e26a6a;
+    z-index: 1;
+}
+
+.notification-card {
+    position: relative;
+    border: solid 1px #ddd;
+    background: #ffffff !important;
+    color: #555555 !important;
+    border-radius: 5px;
+    float: left;
+    width: 100%;
+    box-shadow: 1px 1px 11px -8px black;
+    transition: all ease .15s;
+    z-index: 2;
+    padding: 16px 15px 8px;
+}
+
+.notification-card.readed {
+    box-shadow: none;
+    border: solid 1px #eee;
+}
+
+.notification-card.readed img {
+    opacity: .6;
+}
+
+.notification-content-left {
+    float: left;
+    width: 50px;
+}
+
+.notification-content-right {
+    float: left;
+    width: calc(100% - 50px);
+    margin-top: -2px;
+    margin-bottom: 5px;
+}
+
+.notification-title {
+    margin-bottom: 5px !important;
+    font-size: 15px !important;
+    max-height: 38px !important;
+    overflow: hidden !important;
+    color: #555555 !important;
+}
+
+.notification-desc {
+    font-size: 12px;
+    line-height: 15px;
+    overflow: hidden;
+}
+
+.notification-content {
+    float: left;
+    width: 100%;
+    padding-left: 15px;
+}
+
+.imagem-notificacao {
+    border-radius: 50px;
+}
+
+.notification-item.activeRemove > .notification-card {
+    transform: translateX(-170px);
+    opacity: 0;
+}
+
+.notification-item.activeRemove > i.material-icons {
+    opacity: 0;
+}
+
+.note-time {
+    width: 100%;
+    font-size: 9px;
+    color: #999999;
+    text-align: center;
+    line-height: 12px;
+    padding-top: 5px;
+    float: left;
+    width: 55px;
+    margin-left: -3px;
 }

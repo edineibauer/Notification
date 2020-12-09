@@ -1,9 +1,10 @@
 {
     "title": "Notificações {{sitename}}",
-    "css": ["bootstrap"],
+    "jsPre": ["@webcomponents/webcomponentsjs/webcomponents-bundle"],
+    "css": ["bootstrap", "core/clientes/base"],
     "navbar": true,
     "header": false,
     "!setor": "0",
     "redirect": "login",
-    "templates": ["note", "empty"]
+    "templates": ["note", "notificacoesEmpty"]
 }
