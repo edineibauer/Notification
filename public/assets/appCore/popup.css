@@ -1,0 +1,30 @@
+#notificationModalParent {
+    height: 100vh;
+    width: 100%;
+    display: block;
+    background: rgba(0, 0, 0, .85);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100000;
+}
+
+#notificationModal {
+    background: transparent;
+}
+
+#notificationModal .modal-content {
+    background: transparent !important;
+    border: none !important;
+    color: #FFFFFF !important;
+}
+
+#notificationModalTitle {
+    position: relative;
+    z-index: 99999
+}
+
+#notificationModalImg {
+    width: 100%;
+    height: auto
+}
