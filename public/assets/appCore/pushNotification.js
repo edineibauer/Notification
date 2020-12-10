@@ -127,8 +127,6 @@ async function closeNote(id) {
 $(function () {
     if(window.hasOwnProperty("cordova"))
         document.addEventListener("deviceready", setupListeners, false);
-    else
-        setupListeners();
 
     $("body").off("click", "a.notification-title").on("click", "a.notification-title", function () {
         setNotificationOpen($(this).data("id"));
