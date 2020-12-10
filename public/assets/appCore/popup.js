@@ -55,7 +55,9 @@ async function receivePopUpModal(notification) {
  * Recebimento, show modal
  */
 var enableAutoPopUp = !0;
-sse.add("popup", async (data) => {
-    if (USER.setor !== 0 && !isEmpty(data))
-        receivePopUpModal(data);
+$(function () {
+    sse.add("popup", async (data) => {
+        if (USER.setor !== 0 && !isEmpty(data))
+            receivePopUpModal(data);
+    });
 });
