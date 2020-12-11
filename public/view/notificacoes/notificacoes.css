@@ -14,11 +14,11 @@
 }
 
 .titulo {
-    font-size: 20px!important;
-    font-weight: bold!important;
-    margin-top: 28px!important;
-    margin-bottom: 30px!important;
-    float: left!important;
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 28px;
+    margin-bottom: 30px;
+    float: left;
     color: var(--colorText);
 }
 
@@ -34,7 +34,7 @@
 }
 
 #core-menu-custom-bottom li.active i, #core-menu-custom-bottom li.active div, #core-menu-custom-bottom li.active span:not(.badge-notification) {
-    color: #ecbd00 !important;
+    color: #ecbd00;
 }
 
 .mdi-arrow-left {
@@ -84,8 +84,8 @@ h6 {
 .notification-card {
     position: relative;
     border: solid 1px #ddd;
-    background: #ffffff !important;
-    color: #555555 !important;
+    background: #ffffff ;
+    color: #555555;
     border-radius: 5px;
     float: left;
     width: 100%;
@@ -117,11 +117,11 @@ h6 {
 }
 
 .notification-title {
-    margin-bottom: 5px !important;
-    font-size: 15px !important;
-    max-height: 38px !important;
-    overflow: hidden !important;
-    color: #555555 !important;
+    margin-bottom: 5px;
+    font-size: 15px;
+    max-height: 38px;
+    overflow: hidden;
+    color: #555555;
 }
 
 .notification-desc {
