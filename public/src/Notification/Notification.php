@@ -3,6 +3,7 @@
 namespace Notification;
 
 use Conn\Create;
+use Conn\Read;
 use Conn\SqlCommand;
 
 class Notification
@@ -26,15 +27,27 @@ class Notification
     }
 
     /**
-     * @param int|array $usuarios (ownerpub de 1 usuário (int), ou vários usuários (array)
      * @param string $titulo
      * @param string $descricao
+     * @param int|array|null $usuarios (ownerpub de 1 usuário (int), ou vários usuários (array)
      * @param string|null $imagem
      * @return mixed|void|null
      */
-    public static function push($usuarios, string $titulo, string $descricao, string $imagem = null)
+    public static function push(string $titulo, string $descricao, $usuarios = null, string $imagem = null)
     {
-        if (!defined('FB_SERVER_KEY') || empty(FB_SERVER_KEY) || (!is_array($usuarios) && !is_numeric($usuarios)))
+        if (!defined('FB_SERVER_KEY') || empty(FB_SERVER_KEY))
+            return null;
+
+        /**
+         * Se não tiver usuários definidos, seleciona todos
+         */
+        if(empty($usuarios)) {
+            $read = new Read();
+            $read->exeRead("usuarios");
+            $usuarios = $read->getResult();
+        }
+
+        if(!is_array($usuarios) && !is_numeric($usuarios))
             return null;
 
         /**
