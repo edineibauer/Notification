@@ -1,10 +1,33 @@
 async function showPopUpModal(note, notification) {
     let tpl = await getTemplates();
+
+    while(typeof tpl.notificationModal !== "string")
+        await sleep(10);
+
     $("#notificationModal").parent().remove();
     $("#app").append(Mustache.render(tpl.notificationModal, note));
     $('#notificationModal').modal('show');
 
+    let $block = $("<div id='blockBtnPopup'></div>").insertAfter("[data-dismiss='modal']");
+
+    enablePopUpClose = 4;
+    let awaitpopup = setInterval(function() {
+        enablePopUpClose -= .1;
+        let mic = parseFloat(enablePopUpClose % 1).toFixed(1) * 10;
+        $("[data-dismiss='modal']").html("00:0" + parseInt(enablePopUpClose) + ":" + zeroEsquerda(mic));
+        if(enablePopUpClose <= 0) {
+            clearInterval(awaitpopup);
+            enablePopUpClose = 0;
+            $("[data-dismiss='modal']").html("fechar");
+            $block.remove();
+        }
+    }, 100);
+
     $('#app').off('hidden.bs.modal', "#notificationModal").on('hidden.bs.modal', "#notificationModal", async function () {
+
+        while(enablePopUpClose !== 0)
+            await sleep(10);
+
         window.onpopstate = maestruHistoryBack;
         enableAutoPopUp = !0;
         $("#notificationModal").parent().remove();
@@ -15,7 +38,11 @@ async function showPopUpModal(note, notification) {
     /**
      * On back navigation, close modal
      */
-    onHistoryBack(function () {
+    onHistoryBack(async function () {
+
+        while(enablePopUpClose !== 0)
+            await sleep(10);
+
         enableAutoPopUp = !0;
         $("#notificationModal").parent().remove();
         if (notification.length > 0) {
@@ -54,7 +81,7 @@ async function receivePopUpModal(notification) {
  * Overload sistema de notificações
  * Recebimento, show modal
  */
-var enableAutoPopUp = !0;
+var enableAutoPopUp = !0, enablePopUpClose = 0;
 $(function () {
     sse.add("popup", async (data) => {
         if (USER.setor !== 0 && !isEmpty(data))

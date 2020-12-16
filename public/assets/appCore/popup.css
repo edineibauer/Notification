@@ -28,3 +28,13 @@
     width: 100%;
     height: auto
 }
+
+#blockBtnPopup {
+    position: absolute;
+    bottom: 0;
+    height: 100px;
+    background: transparent;
+    z-index: 1000;
+    left: 0;
+    width: 100%;
+}
