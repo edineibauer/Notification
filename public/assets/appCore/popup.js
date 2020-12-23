@@ -10,7 +10,7 @@ async function showPopUpModal(note, notification) {
 
     let $block = $("<div id='blockBtnPopup'></div>").insertAfter("[data-dismiss='modal']");
 
-    enablePopUpClose = 4;
+    enablePopUpClose = 3;
     let awaitpopup = setInterval(function() {
         enablePopUpClose -= .1;
         let mic = parseFloat(enablePopUpClose % 1).toFixed(1) * 10;
