@@ -81,7 +81,7 @@ class Notification
             "notification" => [
                 "title" => $title,
                 "body" => $body,
-                "icon" => $image ?? "",
+                "image" => $image ?? "",
                 "click_action" => "FCM_PLUGIN_ACTIVITY"
             ],
             "priority" => "high"
