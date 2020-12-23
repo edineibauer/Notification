@@ -42,9 +42,11 @@ class Notification
          * Se não tiver usuários definidos, seleciona todos
          */
         if(empty($usuarios)) {
+            $usuarios = [];
             $read = new Read();
             $read->exeRead("usuarios");
-            $usuarios = $read->getResult();
+            foreach ($read->getResult() as $item)
+                $usuarios[] = (int) $item['id'];
         }
 
         if(!is_array($usuarios) && !is_numeric($usuarios))
