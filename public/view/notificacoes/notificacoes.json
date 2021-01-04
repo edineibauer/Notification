@@ -4,6 +4,7 @@
     "css": ["bootstrap", "core/clientes/base"],
     "navbar": true,
     "header": false,
+    "icon": "notifications",
     "!setor": "0",
     "redirect": "login",
     "templates": ["note", "notificacoesEmpty"]
