@@ -41,7 +41,7 @@ function setupOnNotification() {
     FCM.eventTarget.addEventListener(
         "notification",
         function (data) {
-            console.log(data.detail);
+            toast(data.detail.title + "<br>" + data.detail.body, 2500);
         },
         false
     );
