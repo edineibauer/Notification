@@ -56,7 +56,7 @@ class Notification
          * Obter endereço push FCM para enviar push
          */
         $sql = new SqlCommand();
-        $sql->exeCommand("SELECT subscription FROM " . PRE . "push_notifications WHERE usuario " . (is_array($usuarios) ? "IN (" . implode(", ", $usuarios) . ")" : "= {$usuarios}"));
+        $sql->exeCommand("SELECT subscription FROM " . PRE . "push_notifications WHERE usuario " . (is_array($usuarios) ? "IN (" . implode(", ", $usuarios) . ")" : "= {$usuarios}"), !0, !0);
         if ($sql->getResult()) {
             $token = is_array($usuarios) ? array_map(fn($item) => $item['subscription'], $sql->getResult()) : $sql->getResult()[0]['subscription'];
             return self::_privatePushSend($token, $titulo, $descricao, $imagem);

@@ -78,7 +78,7 @@ if (!empty($mensagem['enviar_para_relatorios'])) {
                                  * Convert lista de ids de setor em lista de ids de usuário
                                  */
                                 if (!$isIdUsuarioInReport) {
-                                    $sql->exeCommand("SELECT usuarios_id" . ($email !== "" ? ", {$email}" : "") . " FROM " . PRE . $mensagem['enviar_para'] . " WHERE id IN (" . implode(',', $ids) . ")");
+                                    $sql->exeCommand("SELECT usuarios_id" . ($email !== "" ? ", {$email}" : "") . " FROM " . PRE . $mensagem['enviar_para'] . " WHERE id IN (" . implode(',', $ids) . ")", !0, !0);
                                     if ($sql->getResult()) {
                                         foreach ($sql->getResult() as $item) {
                                             if (!in_array($item['usuarios_id'], $usuarios))
