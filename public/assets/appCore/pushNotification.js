@@ -41,7 +41,8 @@ function setupOnNotification() {
     FCM.eventTarget.addEventListener(
         "notification",
         function (data) {
-            toast(data.detail.title + "<br>" + data.detail.body, 5000, "toast-success");
+            if(typeof data.detail !== "undefined" && typeof data.detail.title === "string")
+                toast(data.detail.title + "<br>" + data.detail.body, 8000, "toast-success");
         },
         false
     );
