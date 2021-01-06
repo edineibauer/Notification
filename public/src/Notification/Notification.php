@@ -63,6 +63,11 @@ class Notification
         if (!defined('FB_SERVER_KEY') || empty(FB_SERVER_KEY))
             return;
 
+        $headers = [
+            "Authorization:key=" . FB_SERVER_KEY,
+            'Content-Type:application/json'
+        ];
+
         $message = [
             "notification" => [
                 "title" => $title,
@@ -72,22 +77,36 @@ class Notification
             ],
             "priority" => "high"
         ];
-        $message[is_string($target) ? 'to' : 'registration_ids'] = $target;
 
-        $headers = [
-            "Authorization:key=" . FB_SERVER_KEY,
-            'Content-Type:application/json'
-        ];
+        if(is_array($target)) {
+            $result = [];
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($message));
-        $result = curl_exec($ch);
-        curl_close($ch);
+            foreach (array_chunk($target,999) as $tt) {
+                $message['registration_ids'] = $tt;
+
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($message));
+                $result[] = curl_exec($ch);
+                curl_close($ch);
+            }
+        } elseif(is_string($target)) {
+            $message['to'] = $target;
+
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($message));
+            $result = curl_exec($ch);
+            curl_close($ch);
+        }
 
         return json_decode($result, !0);
     }
