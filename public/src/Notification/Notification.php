@@ -35,30 +35,16 @@ class Notification
      */
     public static function push(string $titulo, string $descricao, $usuarios = null, string $imagem = null)
     {
-        if (!defined('FB_SERVER_KEY') || empty(FB_SERVER_KEY))
-            return null;
-
-        /**
-         * Se não tiver usuários definidos, seleciona todos
-         */
-        if(empty($usuarios)) {
-            $usuarios = [];
-            $read = new Read();
-            $read->exeRead("usuarios");
-            foreach ($read->getResult() as $item)
-                $usuarios[] = (int) $item['id'];
-        }
-
-        if(!is_array($usuarios) && !is_numeric($usuarios))
+        if (!defined('FB_SERVER_KEY') || empty(FB_SERVER_KEY) || (!empty($usuarios) && !is_array($usuarios) && !is_numeric($usuarios)))
             return null;
 
         /**
          * Obter endereço push FCM para enviar push
          */
         $sql = new SqlCommand();
-        $sql->exeCommand("SELECT subscription FROM " . PRE . "push_notifications WHERE usuario " . (is_array($usuarios) ? "IN (" . implode(", ", $usuarios) . ")" : "= {$usuarios}"), !0, !0);
+        $sql->exeCommand("SELECT subscription FROM " . PRE . "push_notifications" . (!empty($usuarios) ? " WHERE usuario " . (is_array($usuarios) ? "IN (" . implode(", ", $usuarios) . ")" : "= {$usuarios}") : ""), !0, !0);
         if ($sql->getResult()) {
-            $token = is_array($usuarios) ? array_map(fn($item) => $item['subscription'], $sql->getResult()) : $sql->getResult()[0]['subscription'];
+            $token = is_array($usuarios) || empty($usuarios) ? array_map(fn($item) => $item['subscription'], $sql->getResult()) : $sql->getResult()[0]['subscription'];
             return self::_privatePushSend($token, $titulo, $descricao, $imagem);
         }
 
