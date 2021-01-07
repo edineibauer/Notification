@@ -12,7 +12,8 @@
   "require": {
     "php": "^7.4",
     "ueb/dashboard": "*",
-    "ext-json": "*"
+    "ext-json": "*",
+    "google/apiclient": "^2.7"
   },
   "autoload": {
     "psr-0": {

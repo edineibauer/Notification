@@ -3,8 +3,8 @@
 namespace Notification;
 
 use Conn\Create;
-use Conn\Read;
 use Conn\SqlCommand;
+use Google\Auth\CredentialsLoader;
 
 class Notification
 {
@@ -41,73 +41,84 @@ class Notification
         /**
          * Obter endereço push FCM para enviar push
          */
-        $sql = new SqlCommand();
-        $sql->exeCommand("SELECT subscription FROM " . PRE . "push_notifications" . (!empty($usuarios) ? " WHERE usuario " . (is_array($usuarios) ? "IN (" . implode(", ", $usuarios) . ")" : "= {$usuarios}") : ""), !0, !0);
-        if ($sql->getResult()) {
-            $token = is_array($usuarios) || empty($usuarios) ? array_map(fn($item) => $item['subscription'], $sql->getResult()) : $sql->getResult()[0]['subscription'];
-            return self::_privatePushSend($token, $titulo, $descricao, $imagem);
+        $tokens = [];
+        if(!empty($usuarios)) {
+            $sql = new SqlCommand();
+            $sql->exeCommand("SELECT subscription FROM " . PRE . "push_notifications" . (!empty($usuarios) ? " WHERE usuario " . (is_array($usuarios) ? "IN (" . implode(", ", $usuarios) . ")" : "= {$usuarios}") : ""), !0, !0);
+            if ($sql->getResult())
+                $tokens = is_array($usuarios) ? array_map(fn($item) => $item['subscription'], $sql->getResult()) : $sql->getResult()[0]['subscription'];
         }
 
-        return null;
+        return self::_privatePushSend($tokens, $titulo, $descricao, $imagem);
+
     }
 
     /**
-     * @param string|array $target
+     * @param array $tokens
      * @param string $title
      * @param string $body
      * @param string|null $image
      * @return mixed|void
      */
-    private static function _privatePushSend($target, string $title, string $body, string $image = null)
+    private static function _privatePushSend(array $tokens, string $title, string $body, string $image = null)
     {
         if (!defined('FB_SERVER_KEY') || empty(FB_SERVER_KEY))
             return;
 
-        $headers = [
-            "Authorization:key=" . FB_SERVER_KEY,
-            'Content-Type:application/json'
-        ];
+        $result = [];
+        $credentials = CredentialsLoader::makeCredentials('https://www.googleapis.com/auth/firebase.messaging',
+            json_decode(file_get_contents(PATH_HOME . '_config/firebase.json'), true));
 
-        $message = [
-            "notification" => [
-                "title" => $title,
-                "body" => $body,
-                "image" => $image ?? "",
-                "click_action" => "FCM_PLUGIN_ACTIVITY"
-            ],
-            "priority" => "high"
-        ];
+        $tokenRequest = $credentials->fetchAuthToken();
 
-        if(is_array($target)) {
-            $result = [];
+        if(!empty($tokenRequest['access_token'])) {
 
-            foreach (array_chunk($target,999) as $tt) {
-                $message['registration_ids'] = $tt;
+            $headers = [
+                "Authorization: Bearer " . $tokenRequest['access_token'],
+                'Content-Type:application/json'
+            ];
 
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
-                curl_setopt($ch, CURLOPT_POST, true);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($message));
-                $result[] = curl_exec($ch);
-                curl_close($ch);
+            $message = [
+                "message" => [
+                    "notification" => [
+                        "title" => $title,
+                        "body" => $body,
+                        "image" => $image ?? ""
+                    ]
+                ]
+            ];
+
+            if(!empty($tokens)) {
+                foreach ($tokens as $token) {
+                    $message["message"]['token'] = $token;
+                    $result[] = self::_sendRequestFirebasePush($message, $headers);
+                }
+            } else {
+                $message["message"]["topic"] = "todos";
+                $result[] = self::_sendRequestFirebasePush($message, $headers);
             }
-        } elseif(is_string($target)) {
-            $message['to'] = $target;
-
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($message));
-            $result = curl_exec($ch);
-            curl_close($ch);
         }
 
-        return json_decode($result, !0);
+        return $result;
+    }
+
+    /**
+     * @param array $message
+     * @param array $headers
+     * @return bool|string
+     */
+    private static function _sendRequestFirebasePush(array $message, array $headers)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/v1/projects/paygas-app/messages:send');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($message));
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+        return $result;
     }
 }
