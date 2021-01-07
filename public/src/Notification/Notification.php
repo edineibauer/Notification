@@ -81,7 +81,7 @@ class Notification
         if(is_array($target)) {
             $result = [];
 
-            foreach (array_chunk($target,999) as $tt) {
+            foreach (array_chunk($target,499) as $tt) {
                 $message['registration_ids'] = $tt;
 
                 $ch = curl_init();
