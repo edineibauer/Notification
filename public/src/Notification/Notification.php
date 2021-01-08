@@ -45,8 +45,10 @@ class Notification
         if (!empty($usuarios)) {
             $sql = new SqlCommand();
             $sql->exeCommand("SELECT subscription FROM " . PRE . "push_notifications" . (!empty($usuarios) ? " WHERE usuario " . (is_array($usuarios) ? "IN (" . implode(", ", $usuarios) . ")" : "= {$usuarios}") : ""), !0, !0);
-            if ($sql->getResult())
-                $tokens = is_array($usuarios) ? array_map(fn($item) => $item['subscription'], $sql->getResult()) : [$sql->getResult()[0]['subscription']];
+            if (!$sql->getResult())
+                return null;
+
+            $tokens = is_array($usuarios) ? array_map(fn($item) => $item['subscription'], $sql->getResult()) : [$sql->getResult()[0]['subscription']];
         }
 
         return self::_privatePushSend($tokens, $titulo, $descricao, $imagem);
