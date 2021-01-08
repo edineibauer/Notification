@@ -17,16 +17,12 @@ class Notification
      */
     public static function popup(string $titulo, string $descricao, $usuarios = null, string $dateTimeToShow = null)
     {
-        try {
-            $create = new Create();
-            if(!empty($usuarios) && is_array($usuarios)) {
-                foreach ($usuarios as $usuario)
-                    $create->exeCreate("popup", ["titulo" => $titulo, "descricao" => $descricao, "data_de_exibicao" => $dateTimeToShow ?? date("Y-m-d H:i:s"), "ownerpub" => $usuario]);
-            } else {
-                $create->exeCreate("popup", ["titulo" => $titulo, "descricao" => $descricao, "data_de_exibicao" => $dateTimeToShow ?? date("Y-m-d H:i:s"), "ownerpub" => !empty($usuario) && is_numeric($usuario) ? ((int)$usuario) : null]);
-            }
-        } catch (\Exception $e) {
-            return null;
+        $create = new Create();
+        if (!empty($usuarios) && is_array($usuarios)) {
+            foreach ($usuarios as $usuario)
+                $create->exeCreate("popup", ["titulo" => $titulo, "descricao" => $descricao, "data_de_exibicao" => $dateTimeToShow ?? date("Y-m-d H:i:s"), "ownerpub" => $usuario]);
+        } else {
+            $create->exeCreate("popup", ["titulo" => $titulo, "descricao" => $descricao, "data_de_exibicao" => $dateTimeToShow ?? date("Y-m-d H:i:s"), "ownerpub" => !empty($usuario) && is_numeric($usuario) ? ((int)$usuario) : null]);
         }
     }
 
@@ -39,26 +35,21 @@ class Notification
      */
     public static function push(string $titulo, string $descricao, $usuarios = null, string $imagem = null)
     {
-        try {
-            if (!defined('FB_SERVER_KEY') || empty(FB_SERVER_KEY) || (!empty($usuarios) && !is_array($usuarios) && !is_numeric($usuarios)))
-                return null;
-
-            /**
-             * Obter endereço push FCM para enviar push
-             */
-            $tokens = [];
-            if (!empty($usuarios)) {
-                $sql = new SqlCommand();
-                $sql->exeCommand("SELECT subscription FROM " . PRE . "push_notifications" . (!empty($usuarios) ? " WHERE usuario " . (is_array($usuarios) ? "IN (" . implode(", ", $usuarios) . ")" : "= {$usuarios}") : ""), !0, !0);
-                if ($sql->getResult())
-                    $tokens = is_array($usuarios) ? array_map(fn($item) => $item['subscription'], $sql->getResult()) : $sql->getResult()[0]['subscription'];
-            }
-
-            return self::_privatePushSend($tokens, $titulo, $descricao, $imagem);
-
-        } catch (\Exception $e) {
+        if (!defined('FB_SERVER_KEY') || empty(FB_SERVER_KEY) || (!empty($usuarios) && !is_array($usuarios) && !is_numeric($usuarios)))
             return null;
+
+        /**
+         * Obter endereço push FCM para enviar push
+         */
+        $tokens = [];
+        if (!empty($usuarios)) {
+            $sql = new SqlCommand();
+            $sql->exeCommand("SELECT subscription FROM " . PRE . "push_notifications" . (!empty($usuarios) ? " WHERE usuario " . (is_array($usuarios) ? "IN (" . implode(", ", $usuarios) . ")" : "= {$usuarios}") : ""), !0, !0);
+            if ($sql->getResult())
+                $tokens = is_array($usuarios) ? array_map(fn($item) => $item['subscription'], $sql->getResult()) : [$sql->getResult()[0]['subscription']];
         }
+
+        return self::_privatePushSend($tokens, $titulo, $descricao, $imagem);
     }
 
     /**
@@ -79,7 +70,7 @@ class Notification
 
         $tokenRequest = $credentials->fetchAuthToken();
 
-        if(!empty($tokenRequest['access_token'])) {
+        if (!empty($tokenRequest['access_token'])) {
 
             $headers = [
                 "Authorization: Bearer " . $tokenRequest['access_token'],
@@ -96,7 +87,7 @@ class Notification
                 ]
             ];
 
-            if(!empty($tokens)) {
+            if (!empty($tokens)) {
                 foreach ($tokens as $token) {
                     $message["message"]['token'] = $token;
                     $result[] = self::_sendRequestFirebasePush($message, $headers);
