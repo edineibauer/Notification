@@ -1,3 +1,5 @@
+var enableAutoPopUp = !0, enablePopUpClose = 0;
+
 if(inIframe()) {
     async function showPopUpModal(note, notification) {
         let tpl = await getTemplates();
@@ -82,7 +84,6 @@ if(inIframe()) {
      * Overload sistema de notificações
      * Recebimento, show modal
      */
-    var enableAutoPopUp = !0, enablePopUpClose = 0;
     $(function () {
         sse.add("popup", async (data) => {
             if (USER.setor !== 0 && !isEmpty(data))
