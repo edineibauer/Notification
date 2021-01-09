@@ -1,4 +1,4 @@
-var enableAutoPopUp = !0, enablePopUpClose = 0;
+var enablePopUpClose = 0;
 
 async function showPopUpModal(note, notification) {
     let tpl = await getTemplates();
@@ -26,12 +26,10 @@ async function showPopUpModal(note, notification) {
     }, 100);
 
     $('#app').off('hidden.bs.modal', "#notificationModal").on('hidden.bs.modal', "#notificationModal", async function () {
-
         while (enablePopUpClose !== 0)
             await sleep(10);
 
         window.onpopstate = maestruHistoryBack;
-        enableAutoPopUp = !0;
         $("#notificationModal").parent().remove();
         if (typeof notification !== "undefined" && notification.length > 0)
             receivePopUpModal(notification);
@@ -45,7 +43,6 @@ async function showPopUpModal(note, notification) {
         while (enablePopUpClose !== 0)
             await sleep(10);
 
-        enableAutoPopUp = !0;
         $("#notificationModal").parent().remove();
         if (notification.length > 0) {
             setTimeout(function () {
@@ -56,10 +53,9 @@ async function showPopUpModal(note, notification) {
 }
 
 async function receivePopUpModal(notification) {
-    while (!enableAutoPopUp)
+    while ($("#notificationModal").length)
         await sleep(500);
 
-    enableAutoPopUp = !1;
     let showThisPopUp = !0;
     let note = notification.shift();
 
@@ -75,8 +71,6 @@ async function receivePopUpModal(notification) {
 
     if (showThisPopUp)
         showPopUpModal(note, notification);
-    else
-        enableAutoPopUp = !0;
 }
 
 if(!inIframe()) {
