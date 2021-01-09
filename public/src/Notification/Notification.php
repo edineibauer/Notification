@@ -17,7 +17,7 @@ class Notification
     public static function popup(string $titulo, string $descricao, $usuarios = null, string $imagem = null)
     {
         if(!empty($imagem))
-            $descricao = "<img src='{$imagem}' style='max-width: 80%;height: auto;margin: 20px auto;float: initial;display: block;' width='400' title='{$titulo}' alt='imagem do popup' />" . $descricao;
+            $descricao = '<div class="col-11 text-center my-3"><img src="' . $imagem . '" id="notificationModalImg"></div>' . $descricao;
 
         $create = new Create();
         if (!empty($usuarios) && is_array($usuarios)) {
