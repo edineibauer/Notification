@@ -4,8 +4,7 @@ if (!empty($dados['data_de_envio']) && $dados['data_de_envio'] <= date("Y-m-d H:
     $dadosPopup = [
         "titulo" => $dados['titulo'],
         "descricao" => $dados['descricao'],
-        "imagem" => $dados['imagem'],
-        "data_de_exibicao" => $dados['data_de_envio']
+        "imagem" => $dados['imagem']
     ];
 
     $create = new \Conn\Create();

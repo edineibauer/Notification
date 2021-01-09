@@ -9,8 +9,7 @@ if ($read->getResult()) {
             $dadosPopup = [
                 "titulo" => $dados['titulo'],
                 "descricao" => $dados['descricao'],
-                "imagem" => $dados['imagem'],
-                "data_de_exibicao" => $dados['data_de_envio']
+                "imagem" => $dados['imagem']
             ];
 
             $create = new \Conn\Create();
