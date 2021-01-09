@@ -8,21 +8,23 @@ use Google\Auth\CredentialsLoader;
 
 class Notification
 {
-
     /**
      * @param string $titulo
      * @param string $descricao
-     * @param int|array $usuarios (ownerpub de 1 usuário (int), ou vários usuários (array)
-     * @param string|null $dateTimeToShow
+     * @param null $usuarios
+     * @param string|null $imagem
      */
-    public static function popup(string $titulo, string $descricao, $usuarios = null, string $dateTimeToShow = null)
+    public static function popup(string $titulo, string $descricao, $usuarios = null, string $imagem = null)
     {
+        if(!empty($imagem))
+            $descricao = "<img src='{$imagem}' style='max-width: 80%;height: auto;margin: 20px auto;float: initial;display: block;' width='400' title='{$titulo}' alt='imagem do popup' />" . $descricao;
+
         $create = new Create();
         if (!empty($usuarios) && is_array($usuarios)) {
             foreach ($usuarios as $usuario)
-                $create->exeCreate("popup", ["titulo" => $titulo, "descricao" => $descricao, "data_de_exibicao" => $dateTimeToShow ?? date("Y-m-d H:i:s"), "ownerpub" => $usuario]);
+                $create->exeCreate("popup", ["titulo" => $titulo, "descricao" => $descricao, "data_de_exibicao" => date("Y-m-d H:i:s"), "ownerpub" => $usuario]);
         } else {
-            $create->exeCreate("popup", ["titulo" => $titulo, "descricao" => $descricao, "data_de_exibicao" => $dateTimeToShow ?? date("Y-m-d H:i:s"), "ownerpub" => !empty($usuario) && is_numeric($usuario) ? ((int)$usuario) : null]);
+            $create->exeCreate("popup", ["titulo" => $titulo, "descricao" => $descricao, "data_de_exibicao" => date("Y-m-d H:i:s"), "ownerpub" => !empty($usuario) && is_numeric($usuario) ? ((int)$usuario) : null]);
         }
     }
 
