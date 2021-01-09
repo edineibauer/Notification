@@ -3,8 +3,10 @@ var enablePopUpClose = 0;
 async function showPopUpModal(note, notification) {
     let tpl = await getTemplates();
 
-    while (typeof tpl.notificationModal !== "string")
-        await sleep(10);
+    while (typeof tpl.notificationModal !== "string") {
+        await sleep(50);
+        tpl = await getTemplates();
+    }
 
     $("#notificationModal").parent().remove();
     $("#app").append(Mustache.render(tpl.notificationModal, note));
@@ -56,21 +58,18 @@ async function receivePopUpModal(notification) {
     while ($("#notificationModal").length)
         await sleep(500);
 
-    let showThisPopUp = !0;
     let note = notification.shift();
-
     if (note.ownerpub === USER.id) {
-        showThisPopUp = !isEmpty(await db.exeRead("popup", note.id));
-        if (showThisPopUp)
+        if (!isEmpty(await db.exeRead("popup", note.id))) {
             await db.exeDelete("popup", note.id);
+            showPopUpModal(note, notification);
+        }
     } else {
-        showThisPopUp = isEmpty(await db.exeRead("popup_user", {popup: note.id, ownerpub: USER.id}));
-        if (showThisPopUp)
+        if (isEmpty(await db.exeRead("popup_user", {popup: note.id}))) {
             await db.exeCreate("popup_user", {popup: note.id});
+            showPopUpModal(note, notification);
+        }
     }
-
-    if (showThisPopUp)
-        showPopUpModal(note, notification);
 }
 
 if(!inIframe()) {
