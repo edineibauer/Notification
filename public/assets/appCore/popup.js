@@ -1,4 +1,4 @@
-var enablePopUpClose = 0;
+var enablePopUpClose = 0, enablePopUpShow = !0;
 
 async function showPopUpModal(note, notification) {
     let tpl = await getTemplates();
@@ -31,6 +31,7 @@ async function showPopUpModal(note, notification) {
         while (enablePopUpClose !== 0)
             await sleep(10);
 
+        enablePopUpShow = !0;
         window.onpopstate = maestruHistoryBack;
         $("#notificationModal").parent().remove();
         if (typeof notification !== "undefined" && notification.length > 0)
@@ -55,8 +56,10 @@ async function showPopUpModal(note, notification) {
 }
 
 async function receivePopUpModal(notification) {
-    while ($("#notificationModal").length)
+    while (!enablePopUpShow)
         await sleep(500);
+
+    enablePopUpShow = !1;
 
     let note = notification.shift();
     if (note.ownerpub === USER.id) {
