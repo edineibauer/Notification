@@ -10,7 +10,7 @@
     }
   ],
   "require": {
-    "php": "^7.4",
+    "php": ">=7.4",
     "ueb/dashboard": "*",
     "ext-json": "*",
     "google/apiclient": "^2.7"
