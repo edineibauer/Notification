@@ -56,13 +56,16 @@ async function closePopup() {
     $("#notificationModal").parent().remove();
 }
 
-if(!inIframe() && typeof USER === "object" && typeof USER.setor !== "undefined" && USER.setor !== 0) {
+$(async function () {
+    while (typeof USER.setor === "undefined")
+        await sleep(300);
 
-    /**
-     * Overload sistema de notificações
-     * Recebimento, show modal
-     */
-    $(function () {
+    if (!inIframe() && typeof USER === "object" && typeof USER.setor !== "undefined" && USER.setor !== 0) {
+
+        /**
+         * Overload sistema de notificações
+         * Recebimento, show modal
+         */
         sse.add("popup", async (data) => {
             if (!isEmpty(data)) {
 
@@ -77,7 +80,7 @@ if(!inIframe() && typeof USER === "object" && typeof USER.setor !== "undefined" 
                 enablePopUpShow = !1;
                 showPopUpModal(data);
 
-            } else if(localStorage.popupToShow) {
+            } else if (localStorage.popupToShow) {
                 /**
                  * Caso tenha um popup pendente para mostrar
                  * */
@@ -88,5 +91,5 @@ if(!inIframe() && typeof USER === "object" && typeof USER.setor !== "undefined" 
                 showPopUpModal(JSON.parse(localStorage.popupToShow));
             }
         });
-    });
-}
+    }
+});
