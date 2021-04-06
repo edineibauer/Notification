@@ -3,7 +3,7 @@
 $data['data'] = [];
 if(!empty($_SESSION['userlogin']) && $_SESSION['userlogin']['id'] > 0) {
     $read = new \Conn\Read();
-    $read->exeRead("popup", "WHERE data_de_exibicao <= NOW() ORDER BY data_de_exibicao DESC LIMIT 1");
+    $read->exeRead("popup", "WHERE data_de_exibicao <= NOW() AND ownerpub = :ow ORDER BY data_de_exibicao DESC LIMIT 1", "ow={$_SESSION['userlogin']['id']}", !0, !0);
     if($read->getResult()) {
         $item = $read->getResult()[0];
 
