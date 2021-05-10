@@ -39,7 +39,7 @@ class Notification
      */
     public static function push(string $titulo, string $descricao, $usuarios = null, string $imagem = null)
     {
-        $usuarios = empty($usuarios) ? "todos" : null;
+        $usuarios = empty($usuarios) ? "todos" : $usuarios;
 
         if (!defined('FB_SERVER_KEY') || empty(FB_SERVER_KEY) || empty($usuarios) || (!is_array($usuarios) && !is_numeric($usuarios) && !is_string($usuarios)))
             return null;
