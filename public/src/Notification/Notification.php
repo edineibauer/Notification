@@ -2,7 +2,9 @@
 
 namespace Notification;
 
+use Config\Config;
 use Conn\Create;
+use Conn\Read;
 use Conn\SqlCommand;
 use Google\Auth\CredentialsLoader;
 
@@ -37,33 +39,49 @@ class Notification
      */
     public static function push(string $titulo, string $descricao, $usuarios = null, string $imagem = null)
     {
-        if (!defined('FB_SERVER_KEY') || empty(FB_SERVER_KEY) || (!empty($usuarios) && !is_array($usuarios) && !is_numeric($usuarios)))
+        $usuarios = empty($usuarios) ? "todos" : null;
+
+        if (!defined('FB_SERVER_KEY') || empty(FB_SERVER_KEY) || empty($usuarios) || (!is_array($usuarios) && !is_numeric($usuarios) && !is_string($usuarios)))
             return null;
 
-        /**
-         * Obter endereço push FCM para enviar push
-         */
-        $tokens = [];
-        if (!empty($usuarios)) {
+        if(is_numeric($usuarios)) {
+            $sql = new \Conn\SqlCommand(!0, !0);
+            $sql->exeCommand("SELECT p.subscription FROM " . PRE . "usuarios as c JOIN " . PRE . "push_notifications as p ON p.usuario = c.id WHERE c.status = 1 AND c.id = " . $usuarios);
+            return ($sql->getResult() ? self::_privatePushSend($sql->getResult()[0]['subscription'], $titulo, $descricao, $imagem, true) : null);
+
+        } elseif(is_string($usuarios)) {
+
+            /**
+             * TÓPICO ou ID de usuário
+             */
+            return self::_privatePushSend($usuarios, $titulo, $descricao, $imagem);
+
+        } elseif(is_array($usuarios)) {
+
+            /**
+             * Obter endereço push FCM para enviar push
+             */
+            $tokens = [];
             $sql = new SqlCommand();
             $sql->exeCommand("SELECT subscription FROM " . PRE . "push_notifications" . (!empty($usuarios) ? " WHERE usuario " . (is_array($usuarios) ? "IN (" . implode(", ", $usuarios) . ")" : "= {$usuarios}") : ""), !0, !0);
             if (!$sql->getResult())
                 return null;
 
             $tokens = is_array($usuarios) ? array_map(fn($item) => $item['subscription'], $sql->getResult()) : [$sql->getResult()[0]['subscription']];
-        }
 
-        return self::_privatePushSend($tokens, $titulo, $descricao, $imagem);
+            return self::_privatePushSend($tokens, $titulo, $descricao, $imagem);
+        }
     }
 
     /**
-     * @param array $tokens
+     * @param $tokens
      * @param string $title
      * @param string $body
      * @param string|null $image
-     * @return mixed|void
+     * @param bool $isToken
+     * @return array|void
      */
-    private static function _privatePushSend(array $tokens, string $title, string $body, string $image = null)
+    private static function _privatePushSend($tokens, string $title, string $body, string $image = null, bool $isToken = false)
     {
         if (!defined('FB_SERVER_KEY') || empty(FB_SERVER_KEY))
             return;
@@ -91,13 +109,14 @@ class Notification
                 ]
             ];
 
-            if (!empty($tokens)) {
+            if(is_array($tokens)) {
                 foreach ($tokens as $token) {
                     $message["message"]['token'] = $token;
                     $result[] = self::_sendRequestFirebasePush($message, $headers);
                 }
+
             } else {
-                $message["message"]["topic"] = "todos";
+                $message["message"][$isToken ? 'token' : 'topic'] = $tokens;
                 $result[] = self::_sendRequestFirebasePush($message, $headers);
             }
         }
