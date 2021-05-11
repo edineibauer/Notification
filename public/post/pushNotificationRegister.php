@@ -28,7 +28,7 @@ if(defined('FB_SERVER_KEY') && !empty(FB_SERVER_KEY)) {
  * Registra FCM no servidor
  */
 $read = new \Conn\Read();
-$read->exeRead("push_notifications", "WHERE usuario = {$_SESSION['userlogin']['id']} AND code = '{$code}'");
+$read->exeRead("push_notifications", "WHERE usuario = {$_SESSION['userlogin']['id']} AND code = '{$code}'", null, !0, !0, !0);
 if($read->getResult()) {
     $up = new \Conn\Update();
     $up->exeUpdate("push_notifications", ["subscription" => $token], "WHERE id = :id", "id={$read->getResult()[0]['id']}");
