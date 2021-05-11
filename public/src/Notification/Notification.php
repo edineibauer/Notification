@@ -63,7 +63,7 @@ class Notification
              */
             $tokens = [];
             $sql = new SqlCommand();
-            $sql->exeCommand("SELECT subscription FROM " . PRE . "push_notifications" . (!empty($usuarios) ? " WHERE usuario " . (is_array($usuarios) ? "IN (" . implode(", ", $usuarios) . ")" : "= {$usuarios}") : ""), !0, !0);
+            $sql->exeCommand("SELECT DISTINCT subscription FROM " . PRE . "push_notifications" . (!empty($usuarios) ? " WHERE usuario " . (is_array($usuarios) ? "IN (" . implode(", ", $usuarios) . ")" : "= {$usuarios}") : "") . " ORDER BY id DESC", !0, !0);
             if (!$sql->getResult())
                 return null;
 
